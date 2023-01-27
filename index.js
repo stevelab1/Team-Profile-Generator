@@ -23,7 +23,7 @@ const team = [];
 //   * Employee ID
 //   * Email address
 //   * Office number
-const addManager = () => {
+const init = () => {
   return inquirer
     .prompt([
       {
@@ -76,6 +76,7 @@ const addManager = () => {
         managerAnswers.officeNumber
       );
       team.push(manager);
+      console.log(team)
       addEmployee();
     });
 };
@@ -84,6 +85,64 @@ const addManager = () => {
 //   * Add an engineer
 //   * Add an intern
 //   * Finish building the team
+
+const addEmployee = () => {
+  return inquirer
+    .prompt([
+      {
+        type: "list",
+        name: "addEmployee",
+        message: "What would you like to do?",
+        choices: [
+          "Add an engineer",
+          "Add an intern",
+          "Finish building the team",
+        ],
+        default: "Finish building the team",
+        validate: function (value) {
+          if (value === "Add an engineer") {
+            return true;
+          } else if (value === "Add an intern") {
+            return true;
+          } else if (value === "Finish building the team") {
+            return true;
+          } else {
+            return false;
+          }
+        },
+      },
+    ])
+    .then((employeeAnswers) => {
+      if (employeeAnswers === "Add an engineer") {
+        const engineer = new Engineer(
+          engineeAnswers.name,
+          employeeAnswers.id,
+          employeeAnswers.email,
+          employeeAnswers.github
+        );
+        team.push(engineer);
+        addEmployee();
+        return;
+      } else if (employeeAnswers === "Add an intern") {
+        const intern = new Intern(
+          employeeAnswers.name,
+          employeeAnswers.id,
+          employeeAnswers.email,
+          employeeAnswers.school
+        );
+        team.push(intern);
+        addEmployee();
+        return;
+      } else if (employeeAnswers === "Finish building the team") {
+        const html = render(team);
+        fs.writeFile(outputPath, html, (err) =>
+          err ? console.log(err) : console.log("Success!")
+        );
+      }
+    });
+};
+
+init();
 
 // * When a user selects the **engineer** option then a user is prompted to enter the following and then the user is taken back to the menu:
 //   * Engineer's Name
