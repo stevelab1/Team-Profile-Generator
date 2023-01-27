@@ -4,6 +4,7 @@ test.js
 
 # temporarily
 screenshot.png
+package-lock.json
 
 # dependencies
 node_modules
