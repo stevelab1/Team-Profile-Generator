@@ -15,14 +15,14 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 // template
 const render = require("./src/page-template.js");
 
-// prompt user using `inquirer` to gather info about the development team members — creating objects for each team member using classes in lib/ as blueprints — then add each employee to [team]:
+// prompt user using inquirer to gather info about the development team members — creating objects for each team member using classes in lib/ as blueprints — then add each employee to [team]:
 const team = [];
 
 // when user starts the application prompt for team manager’s:
-//   * Name
-//   * Employee ID
-//   * Email address
-//   * Office number
+// * Name
+// * Employee ID
+// * Email address
+// * Office number
 const init = () => {
   return inquirer
     .prompt([
@@ -36,10 +36,10 @@ const init = () => {
         name: "id",
         message: "What is the team manager's employee ID?",
         validate: function (value) {
-          if (isNaN(value) === false) {
+          if (!isNaN(value) && value.length > 0) {
             return true;
           } else {
-            return false;
+            return "Please enter a valid employee ID";
           }
         },
       },
@@ -51,7 +51,7 @@ const init = () => {
           if (value.indexOf("@") > -1) {
             return true;
           } else {
-            return false;
+            return "Please enter a valid email address";
           }
         },
       },
@@ -60,10 +60,10 @@ const init = () => {
         name: "officeNumber",
         message: "What is the team manager's office number?",
         validate: function (value) {
-          if (isNaN(value) === false) {
+          if (!isNaN(value) && value.length > 0) {
             return true;
           } else {
-            return false;
+            return "Please enter a valid office number";
           }
         },
       },
@@ -76,88 +76,104 @@ const init = () => {
         managerAnswers.officeNumber
       );
       team.push(manager);
-      console.log(team)
-      addEmployee();
+      addEmployeeMenu();
     });
 };
 
 // * When a user enters those requirements then the user is presented with a menu with the option to:
-//   * Add an engineer
-//   * Add an intern
-//   * Finish building the team
+// * Add an engineer
+// * Add an intern
+// * Finish building the team
 
-const addEmployee = () => {
+const validateEmail = (value) => value.indexOf("@") > -1;
+const validateID = (value) => !isNaN(value);
+
+const addEmployee = (employeeType) => {
   return inquirer
     .prompt([
       {
-        type: "list",
-        name: "addEmployee",
-        message: "What would you like to do?",
-        choices: [
-          "Add an engineer",
-          "Add an intern",
-          "Finish building the team",
-        ],
-        default: "Finish building the team",
-        validate: function (value) {
-          if (value === "Add an engineer") {
-            return true;
-          } else if (value === "Add an intern") {
-            return true;
-          } else if (value === "Finish building the team") {
-            return true;
-          } else {
-            return false;
-          }
-        },
+        type: "input",
+        name: "name",
+        message: `What is the ${employeeType}'s name?`,
+      },
+      {
+        type: "input",
+        name: "id",
+        message: `What is the ${employeeType}'s employee ID?`,
+        validate: validateID,
+      },
+      {
+        type: "input",
+        name: "email",
+        message: `What is the ${employeeType}'s email address?`,
+        validate: validateEmail,
+      },
+      {
+        type: "input",
+        name: "github",
+        message: `What is the ${employeeType}'s GitHub username?`,
+        when: (answers) => employeeType === "engineer",
+      },
+      {
+        type: "input",
+        name: "school",
+        message: `What is the ${employeeType}'s school?`,
+        when: (answers) => employeeType === "intern",
       },
     ])
-    .then((employeeAnswers) => {
-      if (employeeAnswers === "Add an engineer") {
+    .then((answers) => {
+      if (employeeType === "engineer") {
         const engineer = new Engineer(
-          engineeAnswers.name,
-          employeeAnswers.id,
-          employeeAnswers.email,
-          employeeAnswers.github
+          answers.name,
+          answers.id,
+          answers.email,
+          answers.github
         );
         team.push(engineer);
-        addEmployee();
-        return;
-      } else if (employeeAnswers === "Add an intern") {
+      } else if (employeeType === "intern") {
         const intern = new Intern(
-          employeeAnswers.name,
-          employeeAnswers.id,
-          employeeAnswers.email,
-          employeeAnswers.school
+          answers.name,
+          answers.id,
+          answers.email,
+          answers.school
         );
         team.push(intern);
-        addEmployee();
-        return;
-      } else if (employeeAnswers === "Finish building the team") {
-        const html = render(team);
-        fs.writeFile(outputPath, html, (err) =>
-          err ? console.log(err) : console.log("Success!")
-        );
       }
+      addEmployeeMenu();
     });
 };
 
+const addEmployeeMenu = () => {
+    inquirer
+      .prompt([
+        {
+          type: "list",
+          name: "addEmployeeChoice",
+          message: "What would you like to do?",
+          choices: [
+            "Add an engineer",
+            "Add an intern",
+            "Finish building the team",
+          ],
+          default: "Finish building the team",
+        },
+      ])
+      .then((answers) => {
+        switch (answers.addEmployeeChoice) {
+          case "Add an engineer":
+            addEmployee("engineer");
+            break;
+          case "Add an intern":
+            addEmployee("intern");
+            break;
+          case "Finish building the team":
+            // Generate the team HTML file
+            fs.writeFileSync(outputPath, render(team), "utf-8");
+            console.log("Team HTML file generated successfully!");
+            break;
+        }
+      });
+  };
+  
+
 init();
-
-// * When a user selects the **engineer** option then a user is prompted to enter the following and then the user is taken back to the menu:
-//   * Engineer's Name
-//   * ID
-//   * Email
-//   * GitHub username
-// * When a user selects the intern option then a user is prompted to enter the following and then the user is taken back to the menu:
-//   * Intern’s name
-//   * ID
-//   * Email
-//   * School
-// * When a user decides to finish building their team then they exit the application, and the HTML is generated.
-
-// * Call the `render` function (provided for you) and pass in an array containing all employee objects;
-// * The `render` function will generate and return a block of HTML including templated divs for each employee!
-// * Create an HTML file using the HTML returned from the `render` function.
-// * Write it to a file named `team.html` in the `output` folder.
-// * You can use the provided variable `outputPath` to target this location.
