@@ -1,7 +1,7 @@
 {
   "name": "team-profile-generator",
   "version": "1.0.0",
-  "description": "## Your Task",
+  "description": "Command-line tool to generate a webpage that displays your team's basic info",
   "main": "index.js",
   "directories": {
     "lib": "lib"
