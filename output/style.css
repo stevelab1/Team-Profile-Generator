@@ -1,0 +1,43 @@
+body {
+    padding-bottom: 75px;
+}
+
+* {
+font-family: "Azeret Mono", monospace;
+}
+
+header h1 {
+font-size: 3rem;
+}
+
+header h1, .employee-card .card-header {
+font-weight: bolder;
+}
+
+.jumbotron {
+    border-radius: 0;
+}
+
+.jumbotron {
+    background-color:#A0DDEE;
+    color: white;
+    text-shadow: 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+.employee-card {
+    min-width: 275px;
+    max-width: 325px;
+    margin: 50px 25px;
+    box-shadow: 12px 12px #888888;
+}
+
+.card-header {
+    background-color:#A0DDEE;
+    border-bottom-style: none;
+    height: 140px;
+    padding: 20px;
+}
+
+h3 {
+    font-size: 18px;
+}
