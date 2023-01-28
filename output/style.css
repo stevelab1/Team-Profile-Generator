@@ -3,15 +3,15 @@ body {
 }
 
 * {
-font-family: "Azeret Mono", monospace;
+    font-family: "Azeret Mono", monospace;
 }
 
 header h1 {
-font-size: 3rem;
+    font-size: 3rem;
 }
 
 header h1, .employee-card .card-header {
-font-weight: bolder;
+    font-weight: bolder;
 }
 
 .jumbotron {
