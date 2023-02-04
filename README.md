@@ -8,7 +8,7 @@ A command-line application to generate a webpage displaying your team's basic in
 
 https://github.com/stevelab1/Team-Profile-Generator/blob/main/output/team.html
 
-![Screenshot of generated sample](/assets/Screenshot.png)
+![Screenshot of generated sample](/assets/screenshot.jpg)
 
 ## Installation
 
